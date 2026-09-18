@@ -47,7 +47,7 @@ These results belong to this repository's recorded experiment and should be inte
 
 ## Repository Contents
 
-- `Multiple_Linear_Regression_California_Housing.ipynb.ipynb` — analysis, training, evaluation, and diagnostic plots
+- `california_housing_regression.ipynb` — analysis, training, evaluation, and diagnostic plots
 - `best_elasticnet_model.pkl` — serialized ElasticNet model
 - `scaler.pkl` — fitted `StandardScaler`
 - `README.md` — project documentation
