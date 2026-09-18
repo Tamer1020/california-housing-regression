@@ -1,93 +1,80 @@
-# California Housing Regression – End-to-End ML Project
+# California Housing Regression
 
-This project demonstrates a complete Machine Learning workflow using the **California Housing dataset**.  
-We apply several regression techniques and evaluate their performance, then select and save the best model.
+A structured machine-learning regression project using the California Housing dataset. The repository covers exploratory analysis, feature scaling, regularized linear models, hyperparameter selection, residual analysis, model comparison, and serialization of the selected model for reuse.
 
----
+## Objective
 
-##  Project Overview
+Predict median house values from eight numerical features:
 
-The goal of this project is to **predict median house prices** based on features such as:
+- median income
+- house age
+- average rooms
+- average bedrooms
+- population
+- average occupancy
+- latitude
+- longitude
 
-- Median income  
-- House age  
-- Average rooms  
-- Average bedrooms  
-- Population  
-- Occupancy  
-- Latitude & Longitude  
+## Workflow
 
-The project includes:
+- load and inspect the dataset
+- explore correlations and feature distributions
+- standardize model inputs
+- train Linear, Ridge, Lasso, and ElasticNet regression models
+- tune ElasticNet across `alpha` and `l1_ratio`
+- compare model performance using R² and error diagnostics
+- inspect residual plots
+- save the selected model and fitted scaler
 
-- Data loading & preprocessing  
-- Exploratory Data Analysis (EDA)  
-- Correlation & heatmaps  
-- Residual analysis & diagnostic plots  
-- Multiple Linear Regression  
-- Ridge Regression  
-- Lasso Regression  
-- ElasticNet Regression (Grid Search over alpha & l1_ratio)  
-- Model comparison using R² and error metrics  
-- Saving the best model (`ElasticNet`) and the scaler for deployment  
+## Results
 
----
+| Model | R² score (approx.) |
+|---|---:|
+| Linear Regression | 0.593 |
+| Ridge Regression | 0.595 |
+| Lasso Regression | 0.590 |
+| ElasticNet Regression | **0.596** |
 
-##  Models Tested
+Selected ElasticNet configuration:
 
-| Model                | Best R² Score (approx.) |
-|----------------------|-------------------------|
-| Linear Regression    | ~0.593                  |
-| Ridge Regression     | ~0.595                  |
-| Lasso Regression     | ~0.59 (over-penalized)  |
-| ElasticNet Regression| **~0.596 (Best)**       |
+| Parameter | Value |
+|---|---:|
+| `alpha` | 0.01 |
+| `l1_ratio` | 0.7 |
+| `max_iter` | 5000 |
 
-The best ElasticNet configuration found:
+These results belong to this repository's recorded experiment and should be interpreted as a baseline for the selected preprocessing and validation setup.
 
-- `alpha = 0.01`  
-- `l1_ratio = 0.7`  
-- `max_iter = 5000`
+## Repository Contents
 
-This combination gave the best balance between bias/variance and handled multicollinearity in the features.
+- `Multiple_Linear_Regression_California_Housing.ipynb.ipynb` — analysis, training, evaluation, and diagnostic plots
+- `best_elasticnet_model.pkl` — serialized ElasticNet model
+- `scaler.pkl` — fitted `StandardScaler`
+- `README.md` — project documentation
 
----
-
-##  Files in this Repository
-
-- `Multiple_Linear_Regression_California_Housing.ipynb`  
-  → Main notebook with EDA, training, evaluation, and plots.
-
-- `best_elasticnet_model.pkl`  
-  → Saved ElasticNet model with the best hyperparameters.
-
-- `scaler.pkl`  
-  → Fitted `StandardScaler` used to normalize the features before training.
-
-- `README.md`  
-  → Project documentation (this file).
-
----
-
-##  How to Use the Saved Model
+## Reusing the Saved Model
 
 ```python
 import pickle
 import numpy as np
 
-# Load model
-with open("best_elasticnet_model.pkl", "rb") as f:
-    model = pickle.load(f)
+with open("best_elasticnet_model.pkl", "rb") as model_file:
+    model = pickle.load(model_file)
 
-# Load scaler
-with open("scaler.pkl", "rb") as f:
-    scaler = pickle.load(f)
+with open("scaler.pkl", "rb") as scaler_file:
+    scaler = pickle.load(scaler_file)
 
-# Example input (replace with real values)
-# [MedInc, HouseAge, AveRooms, AveBedrms, Population, AveOccup, Latitude, Longitude]
-x = np.array([[5.0, 30.0, 6.0, 1.0, 1500, 3.0, 34.5, -118.5]])
+# Feature order:
+# [MedInc, HouseAge, AveRooms, AveBedrms,
+#  Population, AveOccup, Latitude, Longitude]
+features = np.array([[5.0, 30.0, 6.0, 1.0, 1500, 3.0, 34.5, -118.5]])
 
-# Scale data
-x_scaled = scaler.transform(x)
+scaled_features = scaler.transform(features)
+prediction = model.predict(scaled_features)
 
-# Predict
-prediction = model.predict(x_scaled)
-print("Predicted price:", prediction[0])
+print("Predicted median house value:", prediction[0])
+```
+
+## Scope
+
+This is a compact structured-data ML project. Its purpose is to demonstrate a reproducible regression workflow and comparison of regularized linear models; it is not presented as a production housing-valuation service.
